@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false">
+
+    <!--设置logPath的变量，变量的值：/Webapp/springboot-mybatis-demo/log -->
+    <property name="logPath" value="E:/worklog/user"/>
+    <property name="system" value="/yf-user"/>
+
+    <!--设置上下文监听-->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date|%thread|%5level|%logger{50}|%L|%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--RollingFileAppender:滚动文件-->
+    <appender name="server"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/${system}_server.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/${system}_server.%d{yyyy-MM-dd}.%i.log.zip
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>2000MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date|%thread|%5level|%logger{50}|%L|%msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--使用上面定义的appender-->
+    <root level="INFO">
+        <appender-ref ref="server"/>
+        <appender-ref ref="console"/>
+    </root>
+</configuration>
