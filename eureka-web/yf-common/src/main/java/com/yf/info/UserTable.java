@@ -12,6 +12,7 @@ public class UserTable implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public  static final String Table = "t_user";
 	private int id;
 	private String name;
 	private String username;

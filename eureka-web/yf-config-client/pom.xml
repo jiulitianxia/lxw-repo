@@ -30,10 +30,12 @@
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
-		 <dependency>
-	<groupId>org.eclipse.jgit</groupId>
-	<artifactId>org.eclipse.jgit</artifactId>
- </dependency>
+		<!-- 引入公共包 -->
+		<dependency>
+		    <groupId>com.springcloud</groupId>
+			<artifactId>yf-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
