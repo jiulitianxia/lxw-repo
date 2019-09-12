@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+	 <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>Bootstrap 实例 - 上下文类</title>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap/bootstrap.min.js"></script>
+	<script src="/js/home.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/toastr.js"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/toastr.css}">
+	<style type="text/css">
+	.container-fluid {
+	    padding-right: 0px;
+	    padding-left: 0px;
+	    margin-right: auto;
+	    margin-left: auto;
+	}
+	.container-fluid tr{
+		text-align: center;
+		vertical-align: middle!important;
+		font-weight:bolder;
+		}
+     .footer{
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		color: #969696;
+		text-align: center;
+		}
+	 body {
+		font-size:12px; 
+		margin-right: 0px;
+		margin-left: 0px;
+		}
+	</style>
+</head>
+<body class="bg-success">
+
+<div class="container" style="width: 240px;margin-top: 40px;margin-right:3px;">
+   <form action="#">
+      <div class="input-group form-group">
+         <input type="number" class="form-control" placeholder="请输入手机号"/>
+          <span class="input-group-btn">
+              <button class="btn btn-info glyphicon glyphicon-search" id="btnserch"></button>
+        </span>
+      </div>
+    </form>
+</div>
+<!-- <div class="container-fluid">
+     	定义一行
+<div class="row">
+    xs代表手机小屏幕，md代表平板中屏幕，lg代表PC大屏幕
+    同一对的元素之和必须等于12，否则出现错误，如A的col-xs-2+B的col-xs-10是等于12的
+    bg-warning是定义浅黄色的背景色
+	<div class="col-xs-1 col-md-2 col-lg-2 bg-success">
+	<span>序号</span> 
+	</div>
+	<div class="col-xs-3 col-md-3 col-lg-3 bg-success">
+	  <span>手机号</span>
+	</div>
+	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
+	  <span>金额</span>
+	</div>
+	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
+	   <span >次数</span>
+	</div>
+	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
+	   <span>时间</span>
+	</div>
+	<div class="col-xs-3 col-md-3 col-lg-3 bg-success">
+	    <span class="caozuo">操作</span>
+	</div>
+</div>
+</div> -->
+
+<div class="container-fluid">
+    <table id="table" class="table  table-bordered" >
+        
+	<thead>
+		<tr class="text-primary">
+			<td>手机号</td>
+			<td>金额(￥)</td>
+			<td>次数</td>
+			<td>充值时间</td>
+			<td>详情</td>
+		</tr>
+	</thead>
+	<tbody class="t_body">
+		<!-- <tr class="success">
+			<td>15070827410</td>
+			<td>1000</td>
+			<td>0001</td>
+			<td>2019-09-05 09:12</td>
+			<td><span class="glyphicon glyphicon-share-alt"></span></td>
+		</tr>
+		<tr class="success">
+			<td>15070827410</td>
+			<td>1000</td>
+			<td>1</td>
+			<td>2019-09-05 10:14</td>
+			<td><span class="glyphicon glyphicon-share-alt"></span></td>
+		</tr>
+		<tr  class="success">
+			<td>15070827410</td>
+			<td>10</td>
+			<td>1</td>
+			<td>2019-09-05 15:00</td>
+			<td><span class="glyphicon glyphicon-share-alt"></span></td>
+		</tr>
+		<tr  class="success">
+			<td>15070827410</td>
+			<td>1000</td>
+			<td>1</td>
+			<td>2019-09-05 17:09</td>
+			<td><a href="" class="glyphicon glyphicon-share-alt" style="text-decoration:none;"></a></td>
+		</tr> -->
+	</tbody>
+    </table>
+</div>
+<footer class="footer">
+<div class="container"> 
+    <div class="row">
+        <div class="col-lg-12"> 
+             <button type="button" class="btn btn-info btn-lg btn-block" id="btn"><span class="glyphicon glyphicon-plus-sign"></span>添加用户</button> 
+        </div>
+    </div>
+</div>
+</footer>
+</body>
+</html>
