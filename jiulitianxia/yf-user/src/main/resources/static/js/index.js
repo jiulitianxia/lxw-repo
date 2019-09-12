@@ -65,7 +65,7 @@ $(function() {
       		  }, 1000);
 	      }else{
 	    	$.ajax({
-	          url:"/api/login",
+	          url:"/login",
 	          data:{username:$("#name").val(),password:$("#pass").val()},
 	          async:true,
 	          cache:false,
@@ -78,7 +78,7 @@ $(function() {
 	 				 $.cookie('uid',data.result.id,{ expires: 7});
 	            	 $("#name").val("");
 	                 $("#pass").val("");
-	                 $(location).attr('href', '/view/home');
+	                 $(location).attr('href', '/yf/home');
 	             }else if(data.result.status=="false"){
 	            	 if(data.result.code=="0101"){
 	            		 toastr.error('用户不存在！');

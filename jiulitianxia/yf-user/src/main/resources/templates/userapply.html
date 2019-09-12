@@ -9,22 +9,24 @@
 	<script src="/js/toastr.js"></script>
 	<script src="/js/bootstrap/bootstrap-select.min.js"></script>
 	<script src="/js/jquery.growl.js"></script>
-	<script src="/js/adduser/adduser.js"></script>
+	<script src="/js/Getparam.js"></script>
+	<script src="/js/home/userapply.js"></script>
 	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/toastr.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap-select.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/jquery.growl.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/userapply.css}">
 	<style type="text/css">
 	#phoneacc {
 	    margin-top: 50px;
 	}
-	#addbtn{
+	#editbtn{
 		margin-left: 50px;
-		margin-top: 210px;
+		margin-top: 150px;
 		}
      #backbtn{
 		margin-left: 120px;
-		margin-top: 210px;
+		margin-top: 150px;
 		}
 	 body {
 		font-size:16px; 
@@ -36,6 +38,7 @@
 	    left:50px;
 	    top:250px;
        }
+       
 	</style>
 </head>
 <body class="bg-success">
@@ -47,18 +50,26 @@
  <label for="username" class="">手机号：</label>
  <input type="tel" id="inphone" class="form-control"  placeholder="请输入手机号" maxlength="11">
  </div>
- <div class="form-group">
-<label for="name">金额(￥)：</label>
-  <select class="form-control selectpicker" id="selmoney" onchange="funcAcc()">
-                          
-</select>
-<label for="name">次数：</label>
- <select  class="form-control selectpicker" id="selaccount">
-       
- </select>
+ <div class="form-group" id="jine">
+ <label for="username" class="">金额(￥)：</label>
+ <input type="number" id="selmoney" class="form-control">
+ </div>
+ <div class="form-group" id="sel">
+ <label for="username" class="">可使用次数：</label>
+ <input type="number" id="selcishu" class="form-control">
+ </div>
+<div class="form-group">
+<label for="username" class="">次数：</label>
+  <div class="input-group spinner">
+    <input type="number" class="form-control" value="1" id="cishu">
+    <div class="input-group-btn-vertical">
+      <button class="btn btn-info" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
+      <button class="btn btn-info" type="button"><i class="glyphicon glyphicon-chevron-down"></i></button>
+    </div>
+  </div>
 </div>
  <div class="form-group">
- <input type="button" value="添加" class="btn btn-primary" id="addbtn">
+ <input type="button" value="使用" class="btn btn-primary" id="editbtn">
  <input type="reset" value="返回" class="btn btn-warning" id="backbtn">
  </div>
  </form> 

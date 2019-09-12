@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.yf.cloud.info.MoneySet;
 import com.yf.cloud.info.UserApply;
 import com.yf.cloud.info.UserInfo;
 import com.yf.cloud.info.UserTable;
@@ -35,5 +36,15 @@ public interface IUserMapper {
 	public List<UserApply> getUserApplyByList(Map<String, Object> param);
 
 	public List<UserInfo> getAllUserInfoByList(Map<String, Object> param);
+
+	public List<MoneySet> getMoneySetingByList();
+
+	public List<MoneySet> getAccountSettingByAccNum(Map<String, Object> param);
+
+	public List<MoneySet> getMoneyByList(Map<String, Object> param);
+
+	public void updateUserInfo(UserInfo userInfo);
+
+	public String getPasswordByUsername(String username);
 
 }

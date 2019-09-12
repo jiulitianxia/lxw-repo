@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+	 <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title></title>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/bootstrap/bootstrap.min.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/toastr.js"></script>
+	<script src="/js/bootstrap/bootstrap-paginator.js"></script>
+	<script src="/js/Getparam.js"></script>
+	<script src="/js/home/userapplydetail.js"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/toastr.css}">
+	<style type="text/css">
+	.container-fluid {
+	    padding-right: 0px;
+	    padding-left: 0px;
+	    margin-right: auto;
+	    margin-left: auto;
+	}
+	.container-fluid tr{
+		text-align: center;
+		vertical-align: middle!important;
+		font-weight:bolder;
+		}
+     .footer{
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		color: #969696;
+		text-align: center;
+		}
+	 body {
+		font-size:14px; 
+		margin-top: 20px;
+		margin-right: 0px;
+		margin-left: 0px;
+		}
+	 .pageindex{
+	   position: relative;
+	   margin-bottom:0px;
+	}
+	</style>
+</head>
+<body class="bg-success">
+<div class="container-fluid">
+    <table id="table" class="table  table-bordered" >
+        
+	<thead>
+		<tr class="text-primary">
+			<td>手机号</td>
+			<td>次数</td>
+			<td>使用时间</td>
+		</tr>
+	</thead>
+	<tbody class="t_body">
+		
+	</tbody>
+    </table>
+</div>
+
+<footer class="footer">
+	<div class="container"> 
+	<div class="row pageindex">
+	  <div class="container">
+		  <ul class="pager" id="pages">
+		    <li class="previous"><a href="#">上一页</a></li>
+		     <li><input type="button" value="返回" class="btn btn-warning" id="backbtn"/></li>
+		    <li class="next"><a href="#">下一页</a></li>
+		  </ul>
+	 </div>
+	</div>
+	</div>
+</footer>
+</body>
+</html>

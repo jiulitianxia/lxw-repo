@@ -9,14 +9,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.yf.cloud.common.CommonTools;
 import com.yf.cloud.common.FastJson;
 import com.yf.cloud.ibusiness.IUser;
+import com.yf.cloud.info.MoneySet;
 import com.yf.cloud.info.UserApply;
 import com.yf.cloud.info.UserInfo;
 import com.yf.cloud.info.UserTable;
@@ -68,7 +73,7 @@ public class UserController {
 	/**
 	 * 登录
 	 */
-	@PostMapping(value="/api/login")
+	@PostMapping(value="/login")
 	public String login(HttpServletRequest request,HttpServletResponse response){
 	   Map<String, Object> mapper = new HashMap<String, Object>();
 	   Map<String, Object> map = new HashMap<String, Object>();
@@ -85,11 +90,19 @@ public class UserController {
 		   if(null ==usertable){
 			   return FastJson.getFalse("0101", "用户不存在");
 		   }else {
+			   
 		     if(Md5Tools.validPassword(password, usertable.getPassword())) {
-		    	 map.put("id", usertable.getId()+"");
-			     map.put("status","true");
-			     mapper.put("result", map);
-			     return FastJson.getResultFromMap(mapper);
+		    	UsernamePasswordToken token = new UsernamePasswordToken(username, usertable.getPassword());
+			    Subject subject = SecurityUtils.getSubject();
+			    try {
+			        subject.login(token);
+			        map.put("id", usertable.getId()+"");
+				    map.put("status","true");
+				    mapper.put("result", map);
+				    return FastJson.getResultFromMap(mapper);
+			    } catch (Exception e) {
+			    	return FastJson.getFalse("0100", "登录失败");
+			    }
 		      }else{
 		    	  return FastJson.getFalse("0102", "密码错误");
 		      }
@@ -105,19 +118,27 @@ public class UserController {
 	 * @param response
 	 * @return
 	 */
-	@PostMapping(value="/api/addUsers")
-	public String addUsers(HttpServletRequest request,HttpServletResponse response){
+	@PostMapping(value="/api/addNewUserInfo")
+	public String addNewUserInfo(HttpServletRequest request,HttpServletResponse response){
 	   Map<String, Object> mapper = new HashMap<String, Object>();
 	   Map<String, Object> map = new HashMap<String, Object>();
+	   Map<String, Object> param = new HashMap<String, Object>();
 	   String userid =request.getParameter("uid");
 	   String phone = request.getParameter("phone");
 	   String money =request.getParameter("money");
 	   String account =request.getParameter("account");
-	   logger.info("########进入####/api/addUsers#######phone="+phone+"###money="+money+"account="+account+"##userid="+userid);
+	   logger.info("########进入####/api/addNewUserInfo#######phone="+phone+
+			   "###money="+money+"account="+account+"##userid="+userid);
 	   if(!CommonTools.validParam(phone,money,account,userid)){
 			 return FastJson.getFalse("0901", " 参数传递错误");
 		   }
 	   try {
+		   param.put("uid", Integer.parseInt(userid));
+		   param.put("phone", phone);
+		   UserInfo ufo =iUser.getUserInfoByAccount(param);
+		   if(null !=ufo){
+			   return FastJson.getFalse("0205", "用户已经存在！");
+		   }
 		   UserInfo userInfo  = new UserInfo();
 		   userInfo.setName(phone);
 		   userInfo.setPhone(phone);
@@ -137,6 +158,40 @@ public class UserController {
 	    map.put("status","true");
 	    mapper.put("result", map);
 	    return FastJson.getResultFromMap(mapper);
+	}
+	/**
+	 * 编辑用户
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@PostMapping(value="/api/editNewUserInfo")
+	public String editNewUserInfo(HttpServletRequest request,HttpServletResponse response){
+	   Map<String, Object> mapper = new HashMap<String, Object>();
+	   Map<String, Object> map = new HashMap<String, Object>();
+	   String userid =request.getParameter("uid");
+	   String phone = request.getParameter("phone");
+	   String money =request.getParameter("money");
+	   String account =request.getParameter("account");
+	   logger.info("########进入####/api/editNewUserInfo#######phone="+phone+"###money="+money+"account="+account+"##userid="+userid);
+	   if(!CommonTools.validParam(phone,money,account,userid)){
+			 return FastJson.getFalse("0901", " 参数传递错误");
+		   }
+	   try {
+		   UserInfo userInfo  = new UserInfo();
+		   userInfo.setName(phone);
+		   userInfo.setPhone(phone);
+		   userInfo.setMoney(Integer.parseInt(money));
+		   userInfo.setAccountNum(Integer.parseInt(account));
+		   userInfo.setUid(Integer.parseInt(userid));
+	       iUser.updateUserInfo(userInfo);
+    	   map.put("status","true");
+		   mapper.put("result", map);
+		   return FastJson.getResultFromMap(mapper);
+	   } catch (Exception e) {
+		e.printStackTrace();
+		return FastJson.getFalse("0200", "添加失败");
+       }
 	}
 	
 	/**
@@ -164,6 +219,7 @@ public class UserController {
 		   userApply.setUid(Integer.parseInt(userid));
 	       int id =iUser.addUserApplyTable(userApply);//存储用户使用情况
 	       if(id>0){
+	    	param.put("uid", Integer.parseInt(userid));
 	    	param.put("phone", phone);
 	    	param.put("account", Integer.parseInt(account));
 	    	iUser.updateUserInfoTable(param);//更新useinfo
@@ -201,6 +257,7 @@ public class UserController {
 		   UserInfo userInfo  = new UserInfo();
 		   userInfo.setName(phone);
 		   userInfo.setPhone(phone);
+		   userInfo.setUid(Integer.parseInt(uid));
 		   userInfo.setMoney(Integer.parseInt(money));
 		   userInfo.setAccountNum(Integer.parseInt(account));
 	       iUser.updateInvestMoneyUserInfo(userInfo);
@@ -220,6 +277,7 @@ public class UserController {
 	 */
 	@PostMapping(value="/api/getUserInfoByAccount")
 	public String getUserInfoByAccount(HttpServletRequest request,HttpServletResponse response){
+	   SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
 	   Map<String, Object> param = new HashMap<String, Object>();
 	   Map<String, Object> map = new HashMap<String, Object>();
 	   Map<String, Object> result = new HashMap<String, Object>();
@@ -237,12 +295,12 @@ public class UserController {
 	    	 map.put("personphone", userinfo.getPhone());
 	    	 map.put("money", userinfo.getMoney()+"");
 	    	 map.put("account", userinfo.getAccountNum()+"");
-	    	 map.put("username", userinfo.getName()+"");
+	    	 map.put("time", format.format(userinfo.getCreatetime())+"");
 	     }else{
 	    	 return FastJson.getFalse("0201", "无此用户信息！");
 	     }
 	     map.put("status","true");
-	     result.put("data", map);
+	     result.put("result", map);
         return FastJson.getResultFromMap(result);	 
 	  } catch (Exception e) {
 		e.printStackTrace();
@@ -266,13 +324,21 @@ public class UserController {
 	   List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
 	   String phone = request.getParameter("phone");
 	   String uid =request.getParameter("uid");
-	   logger.info("########进入####/api/getUserApplyByList#######phone="+phone+"##uid="+uid);
-	   if(!CommonTools.validParam(phone,uid)){
+	   String page =request.getParameter("page");
+	   String pageSize =request.getParameter("pageSize");
+	   logger.info("########进入####/api/getUserApplyByList#######phone="+phone+"##uid="+uid
+			   +"##page="+page+"##pageSize="+pageSize);
+	   if(!CommonTools.validParam(phone,uid,page,pageSize)){
 			 return FastJson.getFalse("0901", " 参数传递错误");
 		   }
 	   try {
 	     param.put("phone", phone);
 	     param.put("uid",Integer.parseInt(uid));
+	     int limit = Integer.parseInt(pageSize);
+		 int offset = (Integer.parseInt(page)-1)*(Integer.parseInt(pageSize));
+		 List<UserApply> listtotal =iUser.getUserApplyByList(param);
+	     param.put("limit", limit);
+	     param.put("offset", offset);
 	     List<UserApply> list =iUser.getUserApplyByList(param);
 	     if(list.size()>0){
 	    	 for(int i=0;i<list.size();i++){
@@ -283,6 +349,7 @@ public class UserController {
 	    		 retList.add(retmap);
 	    	 }
 	     }
+	     map.put("total", listtotal.size()+"");
 	     map.put("dataList", retList);
 	     map.put("status","true");
 	     result.put("result", map);
@@ -303,15 +370,23 @@ public class UserController {
 	   Map<String, Object> param = new HashMap<String, Object>();
 	   Map<String, Object> map = new HashMap<String, Object>();
 	   Map<String, Object> result = new HashMap<String, Object>();
-	   SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	   SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
 	   List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+	   String page =request.getParameter("page");
+	   String pageSize =request.getParameter("pageSize");
 	   String uid =request.getParameter("uid");
-	   logger.info("########进入####/api/getUserApplyByList########uid="+uid);
-	   if(!CommonTools.validParam(uid)){
+	   logger.info("########进入####/api/getAllUserInfoByList##uid="+uid+"##page="+page+"####pageSize="+pageSize);
+	   if(!CommonTools.validParam(uid,page,pageSize)){
 			 return FastJson.getFalse("0901", " 参数传递错误");
 		   }
 	   try {
 	     param.put("uid",Integer.parseInt(uid));
+	     int limit = Integer.parseInt(pageSize);
+		 int offset = (Integer.parseInt(page)-1)*(Integer.parseInt(pageSize));
+	     param.put("limit", limit);
+	     param.put("offset", offset);
+	     List<UserInfo> listtotal =iUser.getAllUserInfoByList(param);
+	     param.put("type", 0);
 	     List<UserInfo> list =iUser.getAllUserInfoByList(param);
 	     if(list.size()>0){
 	    	 for(int i=0;i<list.size();i++){
@@ -323,6 +398,7 @@ public class UserController {
 	    		 retList.add(retmap);
 	    	 }
 	     }
+	     map.put("total", listtotal.size()+"");
 	     map.put("dataList", retList);
 	     map.put("status","true");
 	     result.put("result", map);
@@ -330,6 +406,110 @@ public class UserController {
 	  } catch (Exception e) {
 		e.printStackTrace();
 		 return FastJson.getFalse("0200", "获取用户信息失败！");
+      }
+	}
+	
+	/**
+	 * 获取金额设置
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@GetMapping(value="/api/getMoneySetingByList")
+	public String getMoneySetingByList(HttpServletRequest request,HttpServletResponse response){
+	   Map<String, Object> map = new HashMap<String, Object>();
+	   Map<String, Object> result = new HashMap<String, Object>();
+	   List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+	   logger.info("########进入####/api/getMoneySetingByList########");
+	  
+	   try {
+	     List<MoneySet> list =iUser.getMoneySetingByList();
+	     if(list.size()>0){
+	    	 for(int i=0;i<list.size();i++){
+	    		 Map<String, Object> retmap = new HashMap<String, Object>();
+	    		 retmap.put("money", list.get(i).getMoney()+"");
+	    		 retList.add(retmap);
+	    	 }
+	     }
+	     map.put("dataList", retList);
+	     map.put("status","true");
+	     result.put("result", map);
+        return FastJson.getResultFromMap(result);	 
+	  } catch (Exception e) {
+		e.printStackTrace();
+		 return FastJson.getFalse("0200", "获取金额次数设置失败！");
+      }
+	}
+	/**
+	 * 获取次数设置进行联动
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@GetMapping(value="/api/getAccountsSetting")
+	public String getAccountsSetting(HttpServletRequest request,HttpServletResponse response){
+	   Map<String, Object> map = new HashMap<String, Object>();
+	   Map<String, Object> param = new HashMap<String, Object>();
+	   Map<String, Object> result = new HashMap<String, Object>();
+	   List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+	   logger.info("########进入####/api/getAccountsSetting########");
+	   String moneys = request.getParameter("selmoneysel");
+	   if(!CommonTools.validParam(moneys)){
+			 return FastJson.getFalse("0901", " 参数传递错误");
+		}
+	   try {
+		 param.put("money", Integer.parseInt(moneys));
+	     List<MoneySet> list =iUser.getAccountSettingByAccNum(param);
+	     if(list.size()>0){
+	    	 for(int i=0;i<list.size();i++){
+	    		 Map<String, Object> retmap = new HashMap<String, Object>();
+	    		 retmap.put("accounttimes", list.get(i).getAccountNum()+"");
+	    		 retList.add(retmap);
+	    	 }
+	     }
+	     map.put("dataList", retList);
+	     map.put("status","true");
+	     result.put("result", map);
+        return FastJson.getResultFromMap(result);	 
+	  } catch (Exception e) {
+		e.printStackTrace();
+		 return FastJson.getFalse("0200", "获取金额次数设置失败！");
+      }
+	}
+	/**
+	 * 获取金额设置
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@PostMapping(value="/api/getMoneyList")
+	public String getMoneyList(HttpServletRequest request,HttpServletResponse response){
+	   Map<String, Object> map = new HashMap<String, Object>();
+	   Map<String, Object> param = new HashMap<String, Object>();
+	   Map<String, Object> result = new HashMap<String, Object>();
+	   List<Map<String, Object>> retList = new ArrayList<Map<String, Object>>();
+	   logger.info("########进入####/api/getMoneyList########");
+	   String money =request.getParameter("money");
+	   if(!CommonTools.validParam(money)){
+			 return FastJson.getFalse("0901", " 参数传递错误");
+		   }
+	   try {
+		 param.put("money", Integer.parseInt(money));
+	     List<MoneySet> list =iUser.getMoneyByList(param);
+	     if(list.size()>0){
+	    	 for(int i=0;i<list.size();i++){
+	    		 Map<String, Object> retmap = new HashMap<String, Object>();
+	    		 retmap.put("money", list.get(i).getMoney()+"");
+	    		 retList.add(retmap);
+	    	 }
+	     }
+	     map.put("dataList", retList);
+	     map.put("status","true");
+	     result.put("result", map);
+        return FastJson.getResultFromMap(result);	 
+	  } catch (Exception e) {
+		e.printStackTrace();
+		 return FastJson.getFalse("0200", "获取金额次数设置失败！");
       }
 	}
 }

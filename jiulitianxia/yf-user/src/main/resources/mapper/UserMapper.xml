@@ -14,38 +14,56 @@
    select count(*) from  t_users where username=#{username};        
 </select>
 
-<select id="getAllUserInfo" resultType="com.yf.cloud.info.UserTable">
-   select * from  users ;        
+<select id="getPasswordByUsername" parameterType="String"  resultType="String">
+   select password from  t_users where username=#{username};        
 </select>
 
-<select id="getPassword" parameterType="map"  resultType="String">
-   select password from  users where username=#{username};        
-</select>
 
-<!--############## t_users表  开始########################-->
+<!--##############userapply表  开始########################-->
 <insert id="addUserApplyTable" useGeneratedKeys="true" keyProperty="id" parameterType="com.yf.cloud.info.UserApply">
    insert into userapply(phone,accountNum,createtime,updatetime,uid,db_source) values (#{phone},#{accountNum},now(),now(),#{uid},DataBase());
 </insert>
 <select id="getUserApplyByList" parameterType="map"  resultType="com.yf.cloud.info.UserApply">
-   select * from  userapply where phone=#{phone} and uid=#{uid};        
+   select * from  userapply where phone=#{phone} and uid=#{uid} order by createtime desc  
+   <if test="limit !=null">
+    limit #{offset}, #{limit} ;  
+   </if>
 </select>
 
 
 <!--################# userinfo表  开始#######################-->
 <update id="updateUserInfoTable" parameterType="map">
-   update userinfo set accountNum=accountNum-#{account} where phone=#{phone}
+   update userinfo set accountNum=accountNum-#{account} where uid=#{uid} and phone=#{phone}
 </update>
 <update id="updateInvestMoneyUserInfo" parameterType="com.yf.cloud.info.UserInfo">
-   update userinfo set money=money+#{money},accountNum=accountNum+#{accountNum} where phone=#{phone}
+   update userinfo set money=money+#{money},accountNum=accountNum+#{accountNum} where phone=#{phone} and uid=#{uid}
 </update>
 
 <select id="getUserInfoByAccount" parameterType="map"  resultType="com.yf.cloud.info.UserInfo">
-   select * from  userinfo where phone=#{phone} and uid=#{uid};        
+   select * from  userinfo where phone=#{phone} and uid=#{uid} order by createtime desc;        
 </select>
 <insert id="addUserInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.yf.cloud.info.UserInfo">
    insert into userinfo(name,phone,money,accountNum,createtime,updatetime,uid,db_source) values (#{name},#{phone},#{money},#{accountNum},now(),now(),#{uid},DataBase());
 </insert>
 <select id="getAllUserInfoByList" parameterType="map"  resultType="com.yf.cloud.info.UserInfo">
-   select * from  userinfo where uid=#{uid};        
+   select * from  userinfo where uid=#{uid}  order by createtime desc
+   <if test="type==0">
+    limit #{offset}, #{limit}     
+   </if>
+</select>
+<update id="updateUserInfo" parameterType="map">
+   update userinfo set money=#{money},accountNum=#{accountNum},updatetime=now() where uid=#{uid} and phone=#{phone}
+</update>
+
+
+<!--################# moneyset表  开始#######################-->
+<select id="getMoneySetingByList" parameterType="map"  resultType="com.yf.cloud.info.MoneySet">
+   select * from  moneyset;        
+</select>
+<select id="getAccountSettingByAccNum" parameterType="map"  resultType="com.yf.cloud.info.MoneySet">
+   select * from  moneyset  where money=#{money};        
+</select>
+<select id="getMoneyByList" parameterType="map"  resultType="com.yf.cloud.info.MoneySet">
+   select * from  moneyset  where money !=#{money};        
 </select>
 </mapper>

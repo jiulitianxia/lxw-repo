@@ -3,6 +3,7 @@ package com.yf.cloud.ibusiness;
 import java.util.List;
 import java.util.Map;
 
+import com.yf.cloud.info.MoneySet;
 import com.yf.cloud.info.UserApply;
 import com.yf.cloud.info.UserInfo;
 import com.yf.cloud.info.UserTable;
@@ -30,5 +31,15 @@ public interface IUser {
 	public List<UserApply> getUserApplyByList(Map<String, Object> param);
 
 	public List<UserInfo> getAllUserInfoByList(Map<String, Object> param);
+
+	public List<MoneySet> getMoneySetingByList();
+
+	public List<MoneySet> getAccountSettingByAccNum(Map<String, Object> param);
+
+	public List<MoneySet> getMoneyByList(Map<String, Object> param);
+
+	public void updateUserInfo(UserInfo userInfo);
+
+	public String getPasswordByUsername(String username);
 
 }

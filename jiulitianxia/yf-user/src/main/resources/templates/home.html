@@ -2,12 +2,13 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
 	 <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<title>Bootstrap 实例 - 上下文类</title>
+	<title></title>
 	<script src="/js/jquery.min.js"></script>
 	<script src="/js/bootstrap/bootstrap.min.js"></script>
-	<script src="/js/home.js"></script>
 	<script src="/js/jquery.cookie.js"></script>
 	<script src="/js/toastr.js"></script>
+	<script src="/js/bootstrap/bootstrap-paginator.js"></script>
+	<script src="/js/home/home.js"></script>
 	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/toastr.css}">
 	<style type="text/css">
@@ -29,52 +30,36 @@
 		bottom: 0;
 		color: #969696;
 		text-align: center;
+		margin-bottom:-18px;
 		}
 	 body {
-		font-size:12px; 
+		font-size:14px; 
 		margin-right: 0px;
 		margin-left: 0px;
 		}
+	 .pageindex{
+	   margin-bottom:-25px;
+	}
 	</style>
 </head>
 <body class="bg-success">
-
-<div class="container" style="width: 240px;margin-top: 40px;margin-right:3px;">
-   <form action="#">
-      <div class="input-group form-group">
-         <input type="number" class="form-control" placeholder="请输入手机号"/>
-          <span class="input-group-btn">
-              <button class="btn btn-info glyphicon glyphicon-search" id="btnserch"></button>
-        </span>
-      </div>
-    </form>
+ <span class="pass-forgot pull-right" onclick="loginout(this)" style="margin-right:10px;margin-top:7px;">退出</span>
+<div style="padding: 40px 40px 8px;margin-bottom:10px;margin-left:65px;">
+	<form class="bs-example bs-example-form" role="form">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="input-group">
+					<input type="tel" class="form-control" placeholder="请输入手机号" id="inphone" maxlength="11">
+					<span class="input-group-btn">
+						<button class="btn btn-info" type="button" id="btnserch">
+							查询
+						</button>
+					</span>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+	</form>
 </div>
-<!-- <div class="container-fluid">
-     	定义一行
-<div class="row">
-    xs代表手机小屏幕，md代表平板中屏幕，lg代表PC大屏幕
-    同一对的元素之和必须等于12，否则出现错误，如A的col-xs-2+B的col-xs-10是等于12的
-    bg-warning是定义浅黄色的背景色
-	<div class="col-xs-1 col-md-2 col-lg-2 bg-success">
-	<span>序号</span> 
-	</div>
-	<div class="col-xs-3 col-md-3 col-lg-3 bg-success">
-	  <span>手机号</span>
-	</div>
-	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
-	  <span>金额</span>
-	</div>
-	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
-	   <span >次数</span>
-	</div>
-	<div class="col-xs-2 col-md-2 col-lg-2 bg-success">
-	   <span>时间</span>
-	</div>
-	<div class="col-xs-3 col-md-3 col-lg-3 bg-success">
-	    <span class="caozuo">操作</span>
-	</div>
-</div>
-</div> -->
 
 <div class="container-fluid">
     <table id="table" class="table  table-bordered" >
@@ -82,10 +67,10 @@
 	<thead>
 		<tr class="text-primary">
 			<td>手机号</td>
-			<td>金额(￥)</td>
+			<td>金额</td>
 			<td>次数</td>
 			<td>充值时间</td>
-			<td>详情</td>
+			<td>操作</td>
 		</tr>
 	</thead>
 	<tbody class="t_body">
@@ -120,12 +105,21 @@
 	</tbody>
     </table>
 </div>
+
 <footer class="footer">
 <div class="container"> 
+<div class="row pageindex">
+  <div class="container">
+	  <ul class="pager" id="pages">
+	    <li class="previous"><a href="#">上一页</a></li>
+	    <li class="next"><a href="#">下一页</a></li>
+	  </ul>
+</div>
+    </div>
     <div class="row">
-        <div class="col-lg-12"> 
-             <button type="button" class="btn btn-info btn-lg btn-block" id="btn"><span class="glyphicon glyphicon-plus-sign"></span>添加用户</button> 
-        </div>
+       <div class="col-lg-12"> 
+            <button type="button" class="btn btn-info btn-lg btn-block" id="addbtn"><span class="glyphicon glyphicon-plus-sign"></span>添加用户</button> 
+       </div>
     </div>
 </div>
 </footer>

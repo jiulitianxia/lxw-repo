@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yf.cloud.ibusiness.IUser;
+import com.yf.cloud.info.MoneySet;
 import com.yf.cloud.info.UserApply;
 import com.yf.cloud.info.UserInfo;
 import com.yf.cloud.info.UserTable;
@@ -116,6 +117,50 @@ public class UserC implements IUser {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<UserInfo>();
+		}
+	}
+	@Override
+	public List<MoneySet> getMoneySetingByList() {
+		try {
+			return this.iUserMapper.getMoneySetingByList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<MoneySet>();
+		}
+	}
+	@Override
+	public List<MoneySet> getAccountSettingByAccNum(Map<String, Object> param) {
+		try {
+			return this.iUserMapper.getAccountSettingByAccNum(param);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<MoneySet>();
+		}
+	}
+	@Override
+	public List<MoneySet> getMoneyByList(Map<String, Object> param) {
+		try {
+			return this.iUserMapper.getMoneyByList(param);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<MoneySet>();
+		}
+	}
+	@Override
+	public void updateUserInfo(UserInfo userInfo) {
+		try {
+			this.iUserMapper.updateUserInfo(userInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public String getPasswordByUsername(String username) {
+		try {
+			return this.iUserMapper.getPasswordByUsername(username);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }
