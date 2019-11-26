@@ -1,8 +1,40 @@
 $(function() {
 	$(function(){ 
+		 jinyong();
 		getAllUserInFo($.getURLParam("phone"));
 	});   
-   
+	
+	function jinyong(){
+	 if (window.history && window.history.pushState) {
+		$(window).on('popstate', function () {
+			// 当点击浏览器的 后退和前进按钮 时才会被触发，
+			window.history.pushState('forward', null, '');
+			window.history.forward(1);
+		});
+	 }
+	 window.history.pushState('forward', null, '');  //在IE中必须得有这两行
+	 window.history.forward(1);
+   }
+	function aesMinEncrypt(word){
+        var _word = CryptoJS.enc.Utf8.parse(word),
+            _key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"),
+            _iv = CryptoJS.enc.Utf8.parse("$JL<&*lZFsZ?:p#1");
+        var encrypted = CryptoJS.AES.encrypt(_word, _key, {
+                    iv: _iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+            });
+        return encrypted.toString();
+    }
+	function Decrypt(word){ 
+		var key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"); 
+		var iv = CryptoJS.enc.Utf8.parse('$JL<&*lZFsZ?:p#1'); 
+		var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
+		var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+		var decrypt = CryptoJS.AES.decrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+		var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8); 
+		return decryptedStr.toString();
+	}
    toastr.options = {  
 	    closeButton: false,  // 是否显示关闭按钮，（提示框右上角关闭按钮）
 	    debug: false,        // 是否使用deBug模式
@@ -21,7 +53,7 @@ $(function() {
    
    
    var currentPage = 1;
-   var pageSize = 13;
+   var pageSize = 12;
    var totalPages=0;
    var tempphone ;
    function getAllUserInFo(phone) {
@@ -31,7 +63,7 @@ $(function() {
              page: currentPage,
              pageSize: pageSize,
              uid:$.cookie('uid'),
-             phone:phone
+             phone:aesMinEncrypt(Decrypt(phone))
            },
  	      async:true,
  	      cache:false,

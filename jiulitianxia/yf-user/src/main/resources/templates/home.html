@@ -9,6 +9,7 @@
 	<script src="/js/toastr.js"></script>
 	<script src="/js/bootstrap/bootstrap-paginator.js"></script>
 	<script src="/js/home/home.js"></script>
+	<script src="/js/aes.min.js"></script>
 	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/toastr.css}">
 	<style type="text/css">
@@ -24,14 +25,17 @@
 		font-weight:bolder;
 		}
      .footer{
-		position: absolute;
+        position:fixed; 
 		left: 0;
 		right: 0;
 		bottom: 0;
 		color: #969696;
 		text-align: center;
-		margin-bottom:-18px;
+		margin-bottom: -20px;
 		}
+	#pages{
+       margin-bottom:8px;
+	}
 	 body {
 		font-size:14px; 
 		margin-right: 0px;
@@ -40,8 +44,12 @@
 	 .pageindex{
 	   margin-bottom:-25px;
 	}
+	.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+	line-height: 2.12857143;
+	}
 	</style>
 </head>
+
 <body class="bg-success">
  <span class="pass-forgot pull-right" onclick="loginout(this)" style="margin-right:10px;margin-top:7px;">退出</span>
 <div style="padding: 40px 40px 8px;margin-bottom:10px;margin-left:65px;">
@@ -49,7 +57,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="input-group">
-					<input type="tel" class="form-control" placeholder="请输入手机号" id="inphone" maxlength="11">
+					<input type="tel" class="form-control" placeholder="请输入手机号" id="inphone" maxlength="11" autofocus x-webkit-speech>
 					<span class="input-group-btn">
 						<button class="btn btn-info" type="button" id="btnserch">
 							查询
@@ -59,8 +67,8 @@
 			</div><!-- /.col-lg-6 -->
 		</div><!-- /.row -->
 	</form>
-</div>
 
+</div>
 <div class="container-fluid">
     <table id="table" class="table  table-bordered" >
         
@@ -74,34 +82,7 @@
 		</tr>
 	</thead>
 	<tbody class="t_body">
-		<!-- <tr class="success">
-			<td>15070827410</td>
-			<td>1000</td>
-			<td>0001</td>
-			<td>2019-09-05 09:12</td>
-			<td><span class="glyphicon glyphicon-share-alt"></span></td>
-		</tr>
-		<tr class="success">
-			<td>15070827410</td>
-			<td>1000</td>
-			<td>1</td>
-			<td>2019-09-05 10:14</td>
-			<td><span class="glyphicon glyphicon-share-alt"></span></td>
-		</tr>
-		<tr  class="success">
-			<td>15070827410</td>
-			<td>10</td>
-			<td>1</td>
-			<td>2019-09-05 15:00</td>
-			<td><span class="glyphicon glyphicon-share-alt"></span></td>
-		</tr>
-		<tr  class="success">
-			<td>15070827410</td>
-			<td>1000</td>
-			<td>1</td>
-			<td>2019-09-05 17:09</td>
-			<td><a href="" class="glyphicon glyphicon-share-alt" style="text-decoration:none;"></a></td>
-		</tr> -->
+		
 	</tbody>
     </table>
 </div>
@@ -109,13 +90,13 @@
 <footer class="footer">
 <div class="container"> 
 <div class="row pageindex">
-  <div class="container">
+  <div class="container" >
 	  <ul class="pager" id="pages">
 	    <li class="previous"><a href="#">上一页</a></li>
 	    <li class="next"><a href="#">下一页</a></li>
 	  </ul>
+  </div>
 </div>
-    </div>
     <div class="row">
        <div class="col-lg-12"> 
             <button type="button" class="btn btn-info btn-lg btn-block" id="addbtn"><span class="glyphicon glyphicon-plus-sign"></span>添加用户</button> 

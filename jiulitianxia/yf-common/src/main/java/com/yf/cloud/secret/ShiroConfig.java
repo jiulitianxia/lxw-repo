@@ -4,8 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,6 +22,53 @@ public class ShiroConfig {
 
         return chainDefinition;
     }*/
+	
+	// 下面两个方法对 注解权限起作用有很大的关系，请把这两个方法，放在配置的最上面
+    @Bean(name = "lifecycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+    @Bean
+    public DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator autoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        autoProxyCreator.setProxyTargetClass(true);
+        return autoProxyCreator;
+    }
+    // 配置sessionDAO
+    @Bean(name="sessionDAO")
+    public MemorySessionDAO getMemorySessionDAO(){
+        MemorySessionDAO sessionDAO = new MemorySessionDAO();
+        return sessionDAO;
+    }
+  //配置shiro session 的一个管理器
+    @Bean(name = "sessionManager")
+    public DefaultWebSessionManager getDefaultWebSessionManager(){
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        // 设置session过期时间
+        sessionManager.setGlobalSessionTimeout(60*60*1000);
+        // 请注意看代码
+        sessionManager.setSessionDAO(getMemorySessionDAO());
+        return sessionManager;
+    }
+    @Bean(name = "securityManager")
+    public DefaultWebSecurityManager getDefaultWebSecurityManager() {
+        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        defaultWebSecurityManager.setRealm( myShiroRealm() );
+        // 将sessionDAO放进来
+        defaultWebSecurityManager.setSessionManager( getDefaultWebSessionManager() );
+        return defaultWebSecurityManager;
+    }
+ 
+    @Bean
+    public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(
+            DefaultWebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
+    }
+
+
+	
 	/**
      * ShiroFilterFactoryBean 处理拦截资源文件问题。
      * 注意：单独一个ShiroFilterFactoryBean配置是或报错的，以为在
@@ -49,6 +101,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/js/**","anon");
         filterChainDefinitionMap.put("/templates/**","anon");
       /*  filterChainDefinitionMap.put("/yf", "anon");*/
+        filterChainDefinitionMap.put("/register", "anon");
         filterChainDefinitionMap.put("/login", "anon");
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
 /*        filterChainDefinitionMap.put("/logout", "logout");*/

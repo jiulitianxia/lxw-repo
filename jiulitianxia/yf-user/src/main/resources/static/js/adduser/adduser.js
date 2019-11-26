@@ -1,10 +1,40 @@
 $(function() {
 	$(function(){ 
+		jinyong();
 		 $("#selaccount").prop("disabled", true);        //设置下拉框不可用
 		initSelectOptions("selmoney","getMoneySetingByList");
 		funcAcc();
+		$('.spinner .btn:first-of-type').on('click', function() {
+			$('.spinner input').val( parseInt($('.spinner input').val(), 10) + 1);
+		  });
+		  $('.spinner .btn:last-of-type').on('click', function() {
+			  if(parseInt($('.spinner input').val(), 10)>0){
+				  $('.spinner input').val( parseInt($('.spinner input').val(), 10) - 1);
+			  }
+		  });
 	}); 
-   
+   function jinyong(){
+	if (window.history && window.history.pushState) {
+		$(window).on('popstate', function () {
+			// 当点击浏览器的 后退和前进按钮 时才会被触发，
+			window.history.pushState('forward', null, '');
+			window.history.forward(1);
+		});
+	}
+	window.history.pushState('forward', null, '');  //在IE中必须得有这两行
+	window.history.forward(1);
+   }
+   function aesMinEncrypt(word){
+       var _word = CryptoJS.enc.Utf8.parse(word),
+           _key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"),
+           _iv = CryptoJS.enc.Utf8.parse("$JL<&*lZFsZ?:p#1");
+       var encrypted = CryptoJS.AES.encrypt(_word, _key, {
+                   iv: _iv,
+                   mode: CryptoJS.mode.CBC,
+                   padding: CryptoJS.pad.Pkcs7
+           });
+       return encrypted.toString();
+   }
 	function addnotice(e){
 	  e.preventDefault();
 	  e.stopPropagation();
@@ -20,7 +50,8 @@ $(function() {
 	 }else{
 		$.ajax({
 	      url:"/api/addNewUserInfo",
-	      data:{uid:$.cookie('uid'),phone:$('#inphone').val(),money:$('#selmoney').val(),account:$('#selaccount').val()},
+	      data:{uid:$.cookie('uid'),phone:aesMinEncrypt($('#inphone').val()),money:$('#selmoney').val(),
+	    	  account:$('#selaccount').val(),rewardacc:$('#rewardacc').val()},
 	      async:true,
 	      cache:false,
 	      type:"POST",

@@ -33,7 +33,12 @@
 
 <!--################# userinfo表  开始#######################-->
 <update id="updateUserInfoTable" parameterType="map">
-   update userinfo set accountNum=accountNum-#{account} where uid=#{uid} and phone=#{phone}
+   <if test="type==0">
+     update userinfo set accountNum=accountNum-#{account},money=0,updatetime=now() where uid=#{uid} and phone=#{phone}
+   </if>
+    <if test="type==1">
+     update userinfo set accountNum=accountNum-#{account},updatetime=now() where uid=#{uid} and phone=#{phone}
+   </if>
 </update>
 <update id="updateInvestMoneyUserInfo" parameterType="com.yf.cloud.info.UserInfo">
    update userinfo set money=money+#{money},accountNum=accountNum+#{accountNum} where phone=#{phone} and uid=#{uid}
@@ -43,16 +48,16 @@
    select * from  userinfo where phone=#{phone} and uid=#{uid} order by createtime desc;        
 </select>
 <insert id="addUserInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.yf.cloud.info.UserInfo">
-   insert into userinfo(name,phone,money,accountNum,createtime,updatetime,uid,db_source) values (#{name},#{phone},#{money},#{accountNum},now(),now(),#{uid},DataBase());
+   insert into userinfo(name,phone,money,accountNum,rewardaccount,createtime,updatetime,uid,db_source) values (#{name},#{phone},#{money},#{accountNum},#{rewardaccount},now(),now(),#{uid},DataBase());
 </insert>
 <select id="getAllUserInfoByList" parameterType="map"  resultType="com.yf.cloud.info.UserInfo">
-   select * from  userinfo where uid=#{uid}  order by createtime desc
+   select * from  userinfo where uid=#{uid} and accountNum &gt;0 order by createtime desc
    <if test="type==0">
     limit #{offset}, #{limit}     
    </if>
 </select>
 <update id="updateUserInfo" parameterType="map">
-   update userinfo set money=#{money},accountNum=#{accountNum},updatetime=now() where uid=#{uid} and phone=#{phone}
+   update userinfo set money=#{money},accountNum=#{accountNum},rewardaccount =rewardaccount+#{rewardaccount} ,updatetime=now() where uid=#{uid} and phone=#{phone}
 </update>
 
 

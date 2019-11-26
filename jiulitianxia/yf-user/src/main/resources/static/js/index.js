@@ -1,4 +1,29 @@
 $(function() {
+	function jinyong(){
+		 if (window.history && window.history.pushState) {
+			$(window).on('popstate', function () {
+				// 当点击浏览器的 后退和前进按钮 时才会被触发，
+				window.history.pushState('forward', null, '');
+				window.history.forward(1);
+			});
+		 }
+		 window.history.pushState('forward', null, '');  //在IE中必须得有这两行
+		 window.history.forward(1);
+	   }
+	jinyong();
+	function aesMinEncrypt(word){
+        var _word = CryptoJS.enc.Utf8.parse(word),
+            _key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"),
+            _iv = CryptoJS.enc.Utf8.parse("$JL<&*lZFsZ?:p#1");
+        var encrypted = CryptoJS.AES.encrypt(_word, _key, {
+                    iv: _iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+            });
+        return encrypted.toString();
+    }
+	
+	
    $(".input input").focus(function() {
       $(this).parent(".input").each(function() {
          $("label", this).css({
@@ -42,7 +67,7 @@ $(function() {
     	$("#name").val($.cookie(cookieName));
     }
     if($.cookie(cookiePass)){
-    	$("#pass").val($.base64.decode($.cookie(cookiePass)));
+    	$("#pass").val($.cookie(cookiePass));
     	 $(".input input").focus();
     }
     /**
@@ -66,23 +91,25 @@ $(function() {
 	      }else{
 	    	$.ajax({
 	          url:"/login",
-	          data:{username:$("#name").val(),password:$("#pass").val()},
+	          data:{username:aesMinEncrypt($("#name").val()),password:aesMinEncrypt($("#pass").val())},
 	          async:true,
 	          cache:false,
 	          type:"POST",
 	          success:function(result){
 	    	     var data = eval("(" + result + ")");
 	             if(data.result.status=="true"){
-	            	 $.cookie('userName',$('#name').val(), { expires: 7});
-	 				 $.cookie('passWord',$.base64.encode($("#pass").val()),{ expires: 7});
-	 				 $.cookie('uid',data.result.id,{ expires: 7});
+	            	 $.cookie('userName',$('#name').val(), { expires: 1});
+	 				 $.cookie('passWord',$("#pass").val(),{ expires: 1});
+	 				 $.cookie('uid',data.result.id,{ expires: 1});
 	            	 $("#name").val("");
 	                 $("#pass").val("");
 	                 $(location).attr('href', '/yf/home');
 	             }else if(data.result.status=="false"){
 	            	 if(data.result.code=="0101"){
 	            		 toastr.error('用户不存在！');
-	            	 }else if(data.result.code="0102"){
+	            	 }else if(data.result.code=="0100"){
+	            		 toastr.error('当前用户已登录！');
+	            	 }else if(data.result.code=="0102"){
 	            		 toastr.error('密码错误！');
 	            	 }
 	              }
@@ -153,8 +180,8 @@ $(function() {
     	    }, 1000);
       }else{
     	$.ajax({
-          url:"/api/register",
-          data:{username:$("#regname").val(),password:$("#regpass").val(),repassword:$("#reregpass").val()},
+          url:"/register",
+          data:{username:aesMinEncrypt($("#regname").val()),password:aesMinEncrypt($("#regpass").val()),repassword:aesMinEncrypt($("#reregpass").val())},
           async:true,
           cache:false,
           type:"POST",
@@ -167,6 +194,8 @@ $(function() {
 	        	 registernotice(e);
 	        	 setTimeout(function () { 
         		    $(".alt-2").click(); 
+        		    $("#name").val("");
+	                 $("#pass").val("");
         		  }, 2000);
              }else if(data.result.status=="false"){
             	 if(data.result.code=="0103"){
@@ -242,7 +271,25 @@ $(function() {
       }
 
    });
+   /**
+    * 关闭系统
+    */
+  
+    $(".pass-forgot").click(function(e) {
+    	if (navigator.userAgent.indexOf("MSIE") > 0) {
+           window.opener = null;
+           window.close();
+        } else if (navigator.userAgent.indexOf("Firefox")!=-1 || navigator.userAgent.indexOf("Chrome")!=-1) {
+           window.location.href = 'about:blank';
+           window.close();
+        } else {
+           window.opener = null;
+           window.location.href = 'about:blank';
+           window.close();
+        }
    
+	 });
+
    toastr.options = {  
 	    closeButton: false,  // 是否显示关闭按钮，（提示框右上角关闭按钮）
 	    debug: false,        // 是否使用deBug模式

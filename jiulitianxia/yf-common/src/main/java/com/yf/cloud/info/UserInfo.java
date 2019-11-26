@@ -20,6 +20,7 @@ public class UserInfo implements Serializable{
 	private String phone;//用户手机号
     private int    money;//充值金额
 	private int    accountNum;//可使用次数
+	private int    rewardaccount;//奖励次数
 	private Date   createtime;
 	private int    uid;//t_users id
 	private String db_source;

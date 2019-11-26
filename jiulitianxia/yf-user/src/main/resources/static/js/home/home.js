@@ -1,14 +1,44 @@
 $(function() {
 	$(function(){ 
+		jinyong();
 		getAllUserInFo();
 	}); 
+	function jinyong(){
+	 if (window.history && window.history.pushState) {
+		$(window).on('popstate', function () {
+			// 当点击浏览器的 后退和前进按钮 时才会被触发，
+			window.history.pushState('forward', null, '');
+			window.history.forward(1);
+		});
+	 }
+	 window.history.pushState('forward', null, '');  //在IE中必须得有这两行
+	 window.history.forward(1);
+   }
+	var key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"); 
+	var iv = CryptoJS.enc.Utf8.parse('$JL<&*lZFsZ?:p#1'); 
+	function aesMinEncrypt(word){
+		srcs = CryptoJS.enc.Utf8.parse(word);
+		var encrypted = CryptoJS.AES.encrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+		return encrypted.ciphertext.toString();
+	}
+	function Encrypt(word){
+        var _word = CryptoJS.enc.Utf8.parse(word),
+            _key = CryptoJS.enc.Utf8.parse("{g;,9~lde^[w`SR5"),
+            _iv = CryptoJS.enc.Utf8.parse("$JL<&*lZFsZ?:p#1");
+        var encrypted = CryptoJS.AES.encrypt(_word, _key, {
+                    iv: _iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+            });
+        return encrypted.toString();
+    }
    $("#btnserch").click(function(e) {
 	 if(''==$('#inphone').val()){
 		 toastr.error('请输入手机号！');
 	 }else{
 		$.ajax({
 	      url:"/api/getUserInfoByAccount",
-	      data:{uid:$.cookie('uid'),phone:$('#inphone').val()},
+	      data:{uid:$.cookie('uid'),phone:Encrypt($('#inphone').val())},
 	      async:true,
 	      cache:false,
 	      type:"POST",
@@ -19,9 +49,9 @@ $(function() {
 	          $("#pages").css("display", "none");  
               var tr='<td class="phone">'+data.result.personphone+'</td>'+'<td class="money">'+data.result.money+'</td>'+'<td class="account">'+
               data.result.account+'</td>'+'<td class="time">'+data.result.time+'</td>'+
-              '<td><span class="glyphicon glyphicon-share-alt" style="text-decoration:none;" onclick="detail(this)" id=""detail></span>&nbsp; '+
-              '<span class="glyphicon glyphicon-edit" style="text-decoration:none;" onclick="useredit(this)" id="edit"></span> &nbsp; '+
-              '<span class="glyphicon glyphicon-send"   onclick="userapply(this)" id="apply"></span></td>'
+              '<td><span  style="color:#FF6600" class="glyphicon glyphicon-share-alt" style="text-decoration:none;" onclick="detail(this)" id=""detail></span>&nbsp; '+
+              '<span style="color:#9933CC" class="glyphicon glyphicon-edit" style="text-decoration:none;" onclick="useredit(this)" id="edit"></span> &nbsp; '+
+              '<span style="color:#007700" class="glyphicon glyphicon-send"   onclick="userapply(this)" id="apply"></span></td>'
               $(".t_body").append('<tr>'+tr+'</tr>')
 	         }else if(data.result.status=="false"){
 	        	 if(data.result.code=="0201"){
@@ -56,7 +86,7 @@ $(function() {
    
    
    var currentPage = 1;
-   var pageSize = 9;
+   var pageSize = 7;
    var totalPages=0;
    function getAllUserInFo() {
        $.ajax({
@@ -77,9 +107,9 @@ $(function() {
                         var tr;
                         tr='<td class="phone">'+data.result.dataList[i].phone+'</td>'+'<td class="money">'+data.result.dataList[i].money+'</td>'+'<td class="account">'+
                         data.result.dataList[i].accounttimes+'</td>'+'<td class="time">'+data.result.dataList[i].time+'</td>'+
-                        '<td><span  class="glyphicon glyphicon-share-alt"  onclick="detail(this)" id="detail"></span> &nbsp; '+
-                        '<span class="glyphicon glyphicon-edit"   onclick="useredit(this)" id="edit"></span> &nbsp; '+
-                        '<span class="glyphicon glyphicon-send"   onclick="userapply(this)" id="apply"></span></td>'
+                        '<td><span style="color:#FF6600" class="glyphicon glyphicon-share-alt" onclick="detail(this)" id="detail"></span> &nbsp; '+
+                        '<span style="color:#9933CC" class="glyphicon glyphicon-edit"   onclick="useredit(this)" id="edit"></span> &nbsp; '+
+                        '<span style="color:#007700" class="glyphicon glyphicon-send"   onclick="userapply(this)" id="apply"></span></td>'
                         $(".t_body").append('<tr>'+tr+'</tr>')
                     }
                }else if(data.result.status=="false"){
@@ -132,19 +162,32 @@ $(function() {
 	   }
    });
    detail = function (obj){  
-	   $(location).attr('href', '/yf/getUserDetail?uid='+$.cookie('uid')+'&phone='+$(obj).parent().parent().find(".phone").text());
+	   $(location).attr('href', '/yf/getUserDetail?uid='+$.cookie('uid')+'&phone='+aesMinEncrypt($(obj).parent().parent().find(".phone").text()));
 	}
    useredit =function (obj){ 
      /*alert($(obj).parent().parent().find(".money").text());*/
-     $(location).attr('href', '/yf/editUserInfo?uid='+$.cookie('uid')+'&phone='+$(obj).parent().parent().find(".phone").text()
+     $(location).attr('href', '/yf/editUserInfo?uid='+$.cookie('uid')+'&phone='+aesMinEncrypt($(obj).parent().parent().find(".phone").text())
 		   +'&money='+$(obj).parent().parent().find(".money").text()+'&account='+$(obj).parent().parent().find(".account").text());
 	}
    userapply =function (obj){ 
 	  /*alert($(obj).parent().parent().find(".money").text());*/
-	   $(location).attr('href', '/yf/userapply?uid='+$.cookie('uid')+'&phone='+$(obj).parent().parent().find(".phone").text()
+	   $(location).attr('href', '/yf/userapply?uid='+$.cookie('uid')+'&phone='+aesMinEncrypt($(obj).parent().parent().find(".phone").text())
 			   +'&money='+$(obj).parent().parent().find(".money").text()+'&account='+$(obj).parent().parent().find(".account").text());
 	}
    loginout =function (obj){
-	   $(location).attr('href', '/yf/index');
+     $.cookie('userName',"", { expires: 0});
+	 $.cookie('passWord',"",{ expires: 0});
+	 $.cookie('uid',"",{ expires: 0});
+     $.ajax({
+       url: "/api/logout",
+       data: {
+       },
+      async:true,
+      cache:false,
+      type:"POST",
+       success: function (result) {
+    	   $(location).attr('href', '/yf/index');
+       }
+   })
    }
 });

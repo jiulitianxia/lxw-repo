@@ -13,4 +13,13 @@ public class CommonTools {
 		}
 		return true;
 	}
+	/**
+	 * 格式化电话号码
+	 * @param phone
+	 * @return
+	 */
+	public static String formatePhone(String phone){
+		String formatphone =phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1 $2 $3");
+		return formatphone;
+	}
 }

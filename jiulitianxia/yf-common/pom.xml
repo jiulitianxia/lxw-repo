@@ -12,5 +12,14 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
 	</dependency>
+	<dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-cas</artifactId>
+      <version>1.2.4</version>
+  </dependency>
+  <dependency>
+   <groupId>commons-codec</groupId>
+   <artifactId>commons-codec</artifactId>
+</dependency>
 	</dependencies>
 </project>
